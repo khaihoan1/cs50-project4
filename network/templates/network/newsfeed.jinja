@@ -1,0 +1,10 @@
+{% extends "network/layout.jinja" %}
+{% block posts %}
+    {% for post in posts %}
+        <div>
+            {{post.owner}}
+            {{post.content}}
+            {{ post.created_time }}
+        </div>
+    {% endfor %}
+{% endblock %}

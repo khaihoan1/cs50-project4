@@ -1,0 +1,13 @@
+<h1>hihi</h1>
+{#<form method="POST" action="{{ action_url }}">#}
+<form method="POST" action=".">
+{% csrf_token %}
+{{ form }}
+{% if object %}
+    hihi
+{% endif %}
+<input type="submit" value="Create">
+</form>
+<h1>{{ userrr }} </h1>
+
+    
