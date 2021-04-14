@@ -1,0 +1,43 @@
+body {
+    margin-top: 5px;
+}
+.main-logo {
+    color: #2FB5FA;
+    font-size: 30px;
+}
+.link-item {
+    margin-right: 10px;
+}
+.main-area {
+    margin-top: 5px;
+    height: 100vh;
+    border-width: 2px 0px 0px 2px;
+    border-style: solid;
+    border-color: rgb(241, 231, 231);
+    /* border-collapse: collapse; */
+    /* border: 1px solid grey; */
+}
+.list-link-item {
+    margin: 10px;
+}
+.list-link-item:hover {
+    color: #2FB5FA;
+    cursor: pointer;
+}
+.logout-button {
+    width: 80%;
+    border-radius: 50%
+}
+.user-info-left-menu {
+
+}
+.body-header {
+    border-bottom: 2px solid rgb(241, 231, 231);
+    padding: 10px;
+}
+.post-form {
+    border-bottom: 2px solid rgb(241, 231, 231);
+}
+.news-feed {
+    background: #f2f2f2;
+}
