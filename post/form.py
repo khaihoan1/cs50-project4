@@ -6,6 +6,9 @@ class PostCreateForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs=({'class': 'post-create-input'}))
+        }
 
     def save(self):
         return super().save(commit=False)

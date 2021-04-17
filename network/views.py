@@ -16,7 +16,8 @@ from post.form import PostCreateForm
 
 
 class PostListView(FormMixin, ListView):
-    model = Post
+    queryset = Post.objects.all().order_by('-created_time')
+    paginate_by = 3
     template_name = "network/newsfeed.jinja"
     context_object_name = "posts"
     form_class = PostCreateForm

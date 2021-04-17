@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Social Network{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'network/styles.css' %}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="https://kit.fontawesome.com/4984a29c3b.js" crossorigin="anonymous"></script>
 
@@ -14,59 +15,61 @@
 <body>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-3">
-                <div class="sidebar-sticky sticky-top">
-                    <nav class="navbar">
+            <div class="col-md-3 main-area sidebar-sticky sticky-top">
+                <nav class="navbar">
                     <ul class="navbar-nav">
-                        <li class="nav-item">
+                        <li class="nav-item main-logo list-link-item">
                             <a><i class="fas fa-fan"></i></a>
                         </li>
-                        <li class="nav-item">
-                            <a><i class="fas fa-home"></i> Home</a>
+                        <li class="nav-item list-link-item">
+                            <a><i class="fas fa-home link-item"></i><b>Home</b></a>
                         </li>
-                        <li class="nav-item">
-                            <a><i class="fas fa-hashtag"></i> Following</a>
+                        <li class="nav-item list-link-item">
+                            <a><i class="fas fa-hashtag link-item"></i><b>Following</b></a>
                         </li>
-                        <li class="nav-item">
-                            <a><i class="far fa-bell"></i> Notifications</a>
+                        <li class="nav-item list-link-item">
+                            <a><i class="far fa-bell link-item"></i><b>Notifications</b></a>
                         </li>
-                        <li class="nav-item">
-                            <a><i class="far fa-envelope"></i> Message</a>
+                        <li class="nav-item list-link-item">
+                            <a><i class="far fa-envelope link-item"></i><b>Messages</b></a>
                         </li>
-                        <li class="nav-item">
-                            <a><i class="far fa-bookmark"></i> Bookmarks</a>
+                        <li class="nav-item list-link-item">
+                            <a><i class="far fa-bookmark link-item"></i><b>Bookmarks</b></a>
                         </li>
-                        <li class="nav-item">
-                            <a><i class="far fa-list-alt"></i> Lists</a>
+                        <li class="nav-item list-link-item">
+                            <a><i class="far fa-list-alt link-item"></i><b>Lists</b></a>
                         </li>
-                        <li class="nav-item">
-                            <a><i class="far fa-user"></i> Profile</a>
+                        <li class="nav-item list-link-item">
+                            <a><i class="far fa-user link-item"></i><b>Profile</b></a>
                         </li>
                     </ul>
-                    </nav>
+                </nav>
+                <button class="btn btn-primary logout-button">Log out</button>
+                <div class="user-info-left-menu">
+                    <p>{{ user }}</p>
+                    <p>@{{ user }}</p>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="body-header">
+            <div class="col-md-6 main-area">
+                <div class="body-header row">
                     {{ body_header }}
-                    ALL POSTS
+                    <b>All Posts</b>
                 </div>
-                <div class="post-form">
+                <div class="post-form row">
                     <form method="POST" action="/">
                         {% csrf_token %}
                             {{ form }}
                         {% if object %}
                             hihi
                         {% endif %}
-                        <input type="submit" value="Create">
                     </form>
                 </div>
-                <div class="new-feed">
+                <div class="news-feed row">
                 {% block posts %}
                 {% endblock %}
                 </div>
             </div>
-            <div class="col-md-3"></div>
+            <div class="col-md-3 main-area"></div>
         </div>
     </div>
 </body>
