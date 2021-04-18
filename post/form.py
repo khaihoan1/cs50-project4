@@ -3,11 +3,21 @@ from .models import Post
 
 
 class PostCreateForm(forms.ModelForm):
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.user = request.user
     class Meta:
         model = Post
         fields = ['content']
         widgets = {
-            'content': forms.Textarea(attrs=({'class': 'post-create-input'}))
+            'content': forms.Textarea(attrs=({
+                'rows': '2',
+                'class': 'post-create-input',
+                'placeholder': "What's on your mind?"
+            }))
+        }
+        labels = {
+            'content': ''
         }
 
     def save(self):

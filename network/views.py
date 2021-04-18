@@ -17,14 +17,16 @@ from post.form import PostCreateForm
 
 class PostListView(FormMixin, ListView):
     queryset = Post.objects.all().order_by('-created_time')
-    paginate_by = 3
+    paginate_by = 5
     template_name = "network/newsfeed.jinja"
+    body_title = "All Posts"
     context_object_name = "posts"
     form_class = PostCreateForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = self.get_form()
+        context['body_title'] = self.body_title
         return context
 
 
