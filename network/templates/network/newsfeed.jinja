@@ -9,7 +9,7 @@
         <img class="avatar-post-from-img rounded-circle" src="{% static 'network/a-cute-cat.jpg' %}">
     </div>
     <div class="col-11">
-        <form method="POST" action="/">
+        <form method="POST" action="{% url 'post:post_create' %}">
             {% csrf_token %}
                 {{ form }}
             {% if object %}
@@ -29,7 +29,12 @@
                     <img src="{% static 'network/user.svg' %}" class="rounded-circle">
                 </div>
                 <div class="col-11 post-info">
-                    <p><b>{{ post.owner }}</b></p>
+                    <p>
+                        <b>{{ post.owner }}</b>
+                        {% if post.owner == user %}
+                        <button>Edit</button>
+                        {% endif %}
+                    </p>
                     <p>Created at {{ post.created_time }}</p>
                 </div>
             </div>
@@ -42,9 +47,10 @@
             </div>
             <hr style="margin: 5px;">
             <div class="post-interaction row">
-                <div class="col-4 interaction-holder"><i class="far fa-thumbs-up"></i> Like</div>
-                <div class="col-4 interaction-holder"><i class="far fa-comment-dots"></i> Comment</div>
-                <div class="col-4 interaction-holder"><i class="far fa-share-square"></i> Share</div>
+                <div class="col-3 interaction-holder"><i class="far fa-thumbs-up"></i> Like</div>
+                <div class="col-3 interaction-holder"><i class="far fa-thumbs-up"></i> Dislike</div>
+                <div class="col-3 interaction-holder"><i class="far fa-comment-dots"></i> Comment</div>
+                <div class="col-3 interaction-holder"><i class="far fa-share-square"></i> Share</div>
             </div>
         </div>
     {% endfor %}

@@ -31,6 +31,7 @@ USE_TZ = True
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework',
     'post',
     'interact',
     'network',
