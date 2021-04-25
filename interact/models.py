@@ -6,9 +6,8 @@ from post.models import Post
 
 
 class Interact(models.Model):
-    id = models.CharField(primary_key=True, null=False, max_length=20)
-    user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
-    ref_id = models.CharField(null=False, max_length=20)
+    id = models.AutoField(primary_key=True, null=False)
+    owner = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
 
     class Meta:
         abstract = True
@@ -17,7 +16,7 @@ class Interact(models.Model):
 class Comment(Interact):
     content = models.TextField()
     timestamp = models.TimeField()
-    ref_id = models.ForeignKey(Post, on_delete=models.CASCADE, null=False, db_column="post_id")
+    post_parent = models.ForeignKey(Post, on_delete=models.CASCADE, null=False, db_column="post_parent")
 
     def save(self, *args, **kwargs):
         self.timestamp = timezone.now()
@@ -27,13 +26,23 @@ class Comment(Interact):
 class Reply(Interact):
     content = models.TextField()
     timestamp = models.TimeField(auto_now=True)
-    ref_id = models.ForeignKey(Comment, on_delete=models.CASCADE, null=False, db_column="comment_id")
+    comment_id = models.ForeignKey(Comment, on_delete=models.CASCADE, null=False, db_column="comment_parent")
 
 
 class Like(Interact):
-    id = models.AutoField(primary_key=True, null=False)
     is_like = models.BooleanField(null=False, default=True)
-    post = None
+    post_parent = models.ForeignKey(
+        Post,
+        null=False,
+        on_delete=models.CASCADE,
+        db_column='post_parent',
+        related_name='like'
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['owner', 'post_parent'], name='unique_like')
+        ]
 
 
 class Follow(models.Model):

@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import ListView
 from django.views.generic.edit import FormMixin
+from django.db.models import Count, Case, When, IntegerField
 
 from .models import User
 
@@ -16,16 +17,27 @@ from post.form import PostCreateForm
 
 
 class PostListView(FormMixin, ListView):
-    queryset = Post.objects.all().order_by('-created_time')
-    paginate_by = 3
+    model = Post
+    paginate_by = 5
     template_name = "network/newsfeed.jinja"
+    body_title = "All Posts"
     context_object_name = "posts"
     form_class = PostCreateForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = self.get_form()
+        context['body_title'] = self.body_title
         return context
+
+    def get_queryset(self):
+        return Post.objects.annotate(like_count=Count(Case(
+            When(like__is_like=True, then=1),
+            output_field=IntegerField
+        )), dislike_count=Count(Case(
+            When(like__is_like=False, then=1),
+            output_field=IntegerField)
+        )).order_by('-created_time')  # improve: do we need query all?
 
 
 def login_view(request):
@@ -39,7 +51,7 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect(reverse("index"))
+            return HttpResponseRedirect(reverse("network:index"))
         else:
             return render(request, "network/login.html", {
                 "message": "Invalid username and/or password."
@@ -50,7 +62,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect(reverse("index"))
+    return HttpResponseRedirect(reverse("network:index"))
 
 
 def register(request):
@@ -75,6 +87,6 @@ def register(request):
                 "message": "Username already taken."
             })
         login(request, user)
-        return HttpResponseRedirect(reverse("index"))
+        return HttpResponseRedirect(reverse("network:index"))
     else:
         return render(request, "network/register.html")

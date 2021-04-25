@@ -35,9 +35,46 @@ body {
     border-bottom: 2px solid rgb(241, 231, 231);
     padding: 10px;
 }
+.post-avatar {
+    padding: 10px;
+}
 .post-form {
     border-bottom: 2px solid rgb(241, 231, 231);
+    padding: 15px;
+}
+.post-create-input {
+    width: 100%;
+    border: none;
+    resize: none;
+    outline: none;
+    overflow: auto;
+}
+.avatar-post-form-container {
+    padding: 0px !important;
+}
+.avatar-post-from-img {
+    width: 100%;
+}
+.create-post-button {
+    float: right;
+    margin-right: 10px;
 }
 .news-feed {
     background: #f2f2f2;
+    height: auto;
+    padding: 10px 30px;
+}
+.post-item {
+    width: 100%;
+    background: white;
+    margin: 8px;
+    padding: 10px;
+}
+.interaction-holder {
+    text-align: center;
+    cursor: pointer;
+}
+.like-count-item {
+    width: 15px;
+    height: 15px;
 }

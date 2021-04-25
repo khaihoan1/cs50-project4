@@ -17,7 +17,8 @@ from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("", include("network.urls")),
-    path("post/", include("post.urls"))
+    path('admin/', admin.site.urls),
+    path('', include(('network.urls', 'network'), namespace='network')),
+    path('post/', include(('post.urls', 'post'), namespace='post')),
+    path('interaction/', include('interact.urls'))
 ]

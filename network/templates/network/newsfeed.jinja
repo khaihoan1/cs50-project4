@@ -1,12 +1,62 @@
 {% extends "network/layout.jinja" %}
-{% block posts %}
+{% load static%}
+{% block body %}
+<div class="body-header row">
+    <b>{{ body_title }}</b>
+</div>
+<div class="post-form row">
+    <div class="col-1 avatar-post-form-container">
+        <img class="avatar-post-from-img rounded-circle" src="{% static 'network/a-cute-cat.jpg' %}">
+    </div>
+    <div class="col-11">
+        <form method="POST" action="{% url 'post:post_create' %}">
+            {% csrf_token %}
+                {{ form }}
+            {% if object %}
+                hihi
+            {% endif %}
+            <div class="create-post-button">
+                <button class="btn btn-primary" type="submmit">Yield</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="news-feed row">
     {% for post in posts %}
         <div class="post-item">
-            {{post.owner}}
-            {{post.content}}
-            {{ post.created_time }}
+            <div class="post-header row">
+                <div class="col-1 post-avatar">
+                    <img src="{% static 'network/user.svg' %}" class="rounded-circle">
+                </div>
+                <div class="col-11 post-info">
+                    <p>
+                        <b>{{ post.owner }}</b>
+                        {% if post.owner == user %}
+                        <button>Edit</button>
+                        {% endif %}
+                    </p>
+                    <p>Created at {{ post.created_time }}</p>
+                </div>
+            </div>
+            <div class="post-content">
+                {{post.content}}
+                <div>
+                <img class="like-count-item" src="{% static 'network/like.png' %}">
+                <span>{{ post.like_count }}</span>
+                <img class="like-count-item" src="{% static 'network/like.png' %}">
+                <span>{{ post.dislike_count }}</span>
+                </div>
+            </div>
+            <hr style="margin: 5px;">
+            <div class="post-interaction row">
+                <div class="col-3 interaction-holder"><i class="far fa-thumbs-up"></i> Like</div>
+                <div class="col-3 interaction-holder"><i class="far fa-thumbs-up"></i> Dislike</div>
+                <div class="col-3 interaction-holder"><i class="far fa-comment-dots"></i> Comment</div>
+                <div class="col-3 interaction-holder"><i class="far fa-share-square"></i> Share</div>
+            </div>
         </div>
     {% endfor %}
+    
     {% if is_paginated %}
         <ul class="pagination">
             <li class="page-item"><a class="page-link" href="#">Previous</a></li>
@@ -21,4 +71,5 @@
             <li class="page-item"><a class="page-link" href="#">Next</a></li>
         </ul>
     {% endif %}
+</div>
 {% endblock %}
