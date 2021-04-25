@@ -42,7 +42,9 @@
                 {{post.content}}
                 <div>
                 <img class="like-count-item" src="{% static 'network/like.png' %}">
-                <span>{{ post.count_like }}</span>
+                <span>{{ post.like_count }}</span>
+                <img class="like-count-item" src="{% static 'network/like.png' %}">
+                <span>{{ post.dislike_count }}</span>
                 </div>
             </div>
             <hr style="margin: 5px;">

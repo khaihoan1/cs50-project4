@@ -13,9 +13,10 @@ class PostCreateView(CreateView):
     # success_url = reverse('network:index')
 
     def form_valid(self, form):
-        self.object = form.save()
-        self.object.owner = self.request.user
-        self.object.save()
+        new_post = form.save(commit=False)
+        new_post.owner = self.request.user
+        new_post.save()
+
         return HttpResponseRedirect(reverse('network:index'))
 
     def get(self, *args, **kwargs):

@@ -6,7 +6,7 @@ from post.models import Post
 
 
 class Interact(models.Model):
-    id = models.CharField(primary_key=True, null=False, max_length=20)
+    id = models.AutoField(primary_key=True, null=False)
     owner = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
 
     class Meta:
@@ -26,13 +26,23 @@ class Comment(Interact):
 class Reply(Interact):
     content = models.TextField()
     timestamp = models.TimeField(auto_now=True)
-    comment_parent = models.ForeignKey(Comment, on_delete=models.CASCADE, null=False, db_column="comment_parent")
+    comment_id = models.ForeignKey(Comment, on_delete=models.CASCADE, null=False, db_column="comment_parent")
 
 
 class Like(Interact):
-    id = models.AutoField(primary_key=True, null=False)
     is_like = models.BooleanField(null=False, default=True)
-    post_parent = models.ForeignKey(Post, null=False, on_delete=models.CASCADE, db_column='post_parent')
+    post_parent = models.ForeignKey(
+        Post,
+        null=False,
+        on_delete=models.CASCADE,
+        db_column='post_parent',
+        related_name='like'
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['owner', 'post_parent'], name='unique_like')
+        ]
 
 
 class Follow(models.Model):
