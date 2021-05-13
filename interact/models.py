@@ -16,17 +16,29 @@ class Interact(models.Model):
 class Comment(Interact):
     content = models.TextField()
     timestamp = models.TimeField()
-    post_parent = models.ForeignKey(Post, on_delete=models.CASCADE, null=False, db_column="post_parent")
+    post_parent = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        null=False,
+        db_column='post_parent',
+        related_name='comment',
+    )
+    comment_ref = models.ForeignKey(
+        'self',
+        on_delete=models.CASCADE,
+        null=True,
+        related_name='children_comment'
+    )
 
     def save(self, *args, **kwargs):
         self.timestamp = timezone.now()
         return super(Comment, self).save(*args, **kwargs)
 
 
-class Reply(Interact):
-    content = models.TextField()
-    timestamp = models.TimeField(auto_now=True)
-    comment_id = models.ForeignKey(Comment, on_delete=models.CASCADE, null=False, db_column="comment_parent")
+# class Reply(Interact):
+#     content = models.TextField()
+#     timestamp = models.TimeField(auto_now=True)
+#     comment_id = models.ForeignKey(Comment, on_delete=models.CASCADE, null=False, db_column="comment_parent")
 
 
 class Like(Interact):
@@ -48,3 +60,8 @@ class Like(Interact):
 class Follow(models.Model):
     follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name="followers")
     followed = models.ForeignKey(User, on_delete=models.CASCADE, related_name="followed")
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['follower', 'followed'], name='unique_follow')
+        ]

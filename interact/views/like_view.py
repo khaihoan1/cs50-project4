@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
 from interact.models import Like
-from interact.serializers import LikeSerializer
+from interact.serializers.like_serializer import LikeSerializer
 
 from interact.permissions import like_permissions
 from post.models import Post

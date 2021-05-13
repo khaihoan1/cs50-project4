@@ -5,10 +5,11 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import ListView
 from django.views.generic.edit import FormMixin
-from django.db.models import Count, Case, When, IntegerField
+from django.db.models import Count, Case, When, IntegerField, Prefetch, BooleanField, Value
 
 from .models import User
 
+from interact.models import Like, Follow
 from post.models import Post
 from post.form import PostCreateForm
 
@@ -31,13 +32,30 @@ class PostListView(FormMixin, ListView):
         return context
 
     def get_queryset(self):
-        return Post.objects.annotate(like_count=Count(Case(
-            When(like__is_like=True, then=1),
-            output_field=IntegerField
-        )), dislike_count=Count(Case(
-            When(like__is_like=False, then=1),
+        followed = Follow.objects.filter(follower=self.request.user).values_list('followed', flat=True)
+        if not self.request.user.is_authenticated:
+            return Post.objects.all()
+        return Post.objects.select_related('owner').prefetch_related(
+            Prefetch('like', queryset=Like.objects.select_related('owner'))
+        ).annotate(like_count=Count(Case(
+            When(like__is_like=True, then=Value(1)),
             output_field=IntegerField)
-        )).order_by('-created_time')  # improve: do we need query all?
+        ), dislike_count=Count(Case(
+            When(like__is_like=False, then=Value(1)),
+            output_field=IntegerField)
+        ), follow_already=Case(
+            When(owner__in=followed, then=Value(True)),
+            default=Value(False),
+            output_field=BooleanField())).order_by('-created_time')  # improve: do we need query all?
+
+        # if followed:
+        #     return x.annotate(follow_already=Case(
+        #         When(owner__in=followed, then=Value(True)),
+        #         default=Value(False),
+        #         output_field=BooleanField()))
+
+
+
 
 
 def login_view(request):
