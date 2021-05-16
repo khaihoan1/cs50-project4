@@ -6,15 +6,14 @@ from django.urls import reverse
 from django.views.generic import ListView
 from django.views.generic.edit import FormMixin
 from django.db.models import Count, Case, When, IntegerField, Prefetch, BooleanField, Value
+from django.contrib.auth.decorators import login_required
 
 from .models import User
 
 from interact.models import Like, Follow
 from post.models import Post
 from post.form import PostCreateForm
-
-# def index(request):
-#     return render(request, "network/index.html")
+from network.form import PersonalInfoForm
 
 
 class PostListView(FormMixin, ListView):
@@ -32,9 +31,10 @@ class PostListView(FormMixin, ListView):
         return context
 
     def get_queryset(self):
-        followed = Follow.objects.filter(follower=self.request.user).values_list('followed', flat=True)
-        if not self.request.user.is_authenticated:
-            return Post.objects.all()
+        if self.request.user.is_authenticated:
+            followed = Follow.objects.filter(follower=self.request.user).values_list('followed', flat=True)
+        else:
+            followed = []
         return Post.objects.select_related('owner').prefetch_related(
             Prefetch('like', queryset=Like.objects.select_related('owner'))
         ).annotate(like_count=Count(Case(
@@ -48,14 +48,18 @@ class PostListView(FormMixin, ListView):
             default=Value(False),
             output_field=BooleanField())).order_by('-created_time')  # improve: do we need query all?
 
-        # if followed:
-        #     return x.annotate(follow_already=Case(
-        #         When(owner__in=followed, then=Value(True)),
-        #         default=Value(False),
-        #         output_field=BooleanField()))
 
-
-
+@login_required
+def edit_personal_info(request):
+    form = PersonalInfoForm(instance=request.user)
+    if request.method == "POST":
+        form = PersonalInfoForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+    context = {
+        'form': form
+    }
+    return render(request, 'network/edit_personal_info.jinja', context)
 
 
 def login_view(request):

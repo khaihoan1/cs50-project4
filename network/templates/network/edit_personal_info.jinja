@@ -1,0 +1,9 @@
+{% extends 'network/layout.jinja' %}
+{% load static %}
+{% block body %}
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{form}}
+        <input type="submit" class="btn btn-primary" name="Update">
+    </form>
+{% endblock %}

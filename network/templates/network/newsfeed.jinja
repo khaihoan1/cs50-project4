@@ -6,7 +6,8 @@
 </div>
 <div class="post-form row">
     <div class="col-1 avatar-post-form-container">
-        <img class="avatar-post-from-img rounded-circle" src="{% static 'network/a-cute-cat.jpg' %}">
+        <img class="avatar-post-from-img rounded-circle"
+        src="{% if user.avatar_pic %}{{ user.avatar_pic.url }}{% else %}/media/user.svg{% endif %}">
     </div>
     <div class="col-11">
         <form method="POST" action="{% url 'post:post_create' %}">
@@ -23,8 +24,8 @@
 </div>
 <div class="news-feed row">
     {% for post in posts %}
-        {% for x in post.like.all %}
-            {{ x.owner }} 
+        {% for like in post.like.all %}
+            {{ like.owner }} 
         {% endfor %}
         {% if post.follow_already %}
             followed
@@ -32,7 +33,11 @@
         <div class="post-item">
             <div class="post-header row">
                 <div class="col-1 post-avatar">
-                    <img src="{% static 'network/user.svg' %}" class="rounded-circle">
+                {% if post.owner.avatar_pic %}
+                    <img src="{{ post.owner.avatar_pic.url }}" class="post-avatar-img rounded-circle">
+                {% else %}
+                    <img src="/media/user.svg" class="post-avatar-img rounded-circle">
+                {% endif %}
                 </div>
                 <div class="col-11 post-info">
                     <p>
