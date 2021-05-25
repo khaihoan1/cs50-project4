@@ -1,31 +1,31 @@
 from rest_framework import serializers
-from interact.models import Comment, Like
-
-
-class CommentSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Comment
-        fields = '__all__'
+from interact.models import Like
+from network.user_serializer import UserInfoForInteractionSerializer
 
 
 class LikeSerializer(serializers.ModelSerializer):
-    owner = serializers.PrimaryKeyRelatedField(read_only=True)
-    post_like_count = serializers.SerializerMethodField('get_like_count')
-
-    def get_like_count(self, obj):
-        return Like.objects.filter(post_parent=obj.post_parent).count()
-        # print(self.obj)
-
     class Meta:
         model = Like
-        fields = '__all__'
+        fields = ('is_like',)
 
     def save(self):
-        super().save(owner=self.context['request'].user)
+        return super().save(owner=self.context['request'].user, post_parent=self.context['post'])
 
 
-class ListLikeSerializer(LikeSerializer):
-    def get_like_count(self):
-        return Like.objects.filter(post_parent=self.validated_data['post_parent'].count())
-    post_like_count = serializers.ModelField('get_like_count')
+class ListLikeSerializer(serializers.ModelSerializer):
+    owner = UserInfoForInteractionSerializer()
+
+    class Meta:
+        fields = ('owner',)
+        model = Like
+
+
+# class LikeInfoReturnedAfterCreate(serializers.ModelSerializer):
+#     like_count = serializers.SerializerMethodField('get_like_count')
+
+#     def get_like_count(self, obj):
+#         is_like = obj.is_like
+#         return Like.objects.filter(post_parent=obj.post_parent, is_like=is_like).count()
+
+#     class Meta:
+#         model = Like

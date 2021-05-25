@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 from interact.models import Comment
-from network.user_serializer import UserInfoForInteraction
+from network.user_serializer import UserInfoForInteractionSerializer
 
 
 class CommentSerializer(ModelSerializer):  # this serializer is used for creating
@@ -29,7 +29,7 @@ class ChildCommentSerializer(ModelSerializer):  # serializer for child comments 
 
 class CommentListSerializer(ModelSerializer):  # this one is used for listing comments
     children_comment = ChildCommentSerializer(many=True)
-    owner = UserInfoForInteraction()
+    owner = UserInfoForInteractionSerializer()
 
     class Meta:
         model = Comment

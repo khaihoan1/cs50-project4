@@ -51,6 +51,9 @@ class Like(Interact):
         related_name='like'
     )
 
+    def get_count_to_update(self, is_like: bool):
+        return Like.objects.filter(post_parent=self.post_parent, is_like=is_like).count()
+
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['owner', 'post_parent'], name='unique_like')
