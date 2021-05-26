@@ -27,19 +27,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='comment',
             name='post_parent',
-            field=models.ForeignKey(db_column='post_parent', default='cc', on_delete=django.db.models.deletion.CASCADE, to='post.post'),
+            field=models.ForeignKey(db_column='post_parent', on_delete=django.db.models.deletion.CASCADE, to='post.post'),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='like',
             name='post_parent',
-            field=models.ForeignKey(db_column='post_parent', default='cc', on_delete=django.db.models.deletion.CASCADE, to='post.post'),
+            field=models.ForeignKey(db_column='post_parent', on_delete=django.db.models.deletion.CASCADE, to='post.post'),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='reply',
             name='comment_parent',
-            field=models.ForeignKey(db_column='comment_parent', default='cc', on_delete=django.db.models.deletion.CASCADE, to='interact.comment'),
+            field=models.ForeignKey(db_column='comment_parent', on_delete=django.db.models.deletion.CASCADE, to='interact.comment'),
             preserve_default=False,
         ),
     ]
