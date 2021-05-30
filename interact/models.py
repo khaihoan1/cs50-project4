@@ -21,7 +21,7 @@ class Comment(Interact):
         on_delete=models.CASCADE,
         null=False,
         db_column='post_parent',
-        related_name='comment',
+        related_name='comments',
     )
     comment_ref = models.ForeignKey(
         'self',
@@ -48,7 +48,7 @@ class Like(Interact):
         null=False,
         on_delete=models.CASCADE,
         db_column='post_parent',
-        related_name='like'
+        related_name='likes'
     )
 
     def get_count_to_update(self, is_like: bool):

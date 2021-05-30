@@ -49,17 +49,17 @@ class LikeViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         instance = self.perform_create(serializer)
-        serializer.data['count'] = instance.get_count_to_update(
-            self.kwargs['like_or_dislike'] == 'like'
-        )
+        data_to_return = {
+            'like_count_updated': instance.get_count_to_update(
+                self.kwargs['like_or_dislike'] == 'like'
+            )}  # not just increase like_count by 1, this returns new Like count (by query)
         headers = self.get_success_headers(serializer.data)  # serialize.data cannot be modified
+        data_to_return.update(serializer.data)
         return Response(
-            data={'inform': "successfully", 'data': serializer.data},
+            data={'inform': "successfully", 'data': data_to_return},
             status=status.HTTP_201_CREATED,
             headers=headers
         )
-
-        return super().create(request)
 
     def perform_create(self, serializer):
         return serializer.save()

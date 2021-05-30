@@ -24,26 +24,26 @@
 </div>
 <div class="news-feed row">
     {% for post in posts %}
-        {% for like in post.like.all %}
-            {{ like.owner }} 
-        {% endfor %}
-        {% if post.follow_already %}
-            followed
-        {% endif %}
         <div class="post-item">
             <div class="post-header row">
-                <div class="col-1 post-avatar">
+                <div class="col-2 post-avatar">
                 {% if post.owner.avatar_pic %}
                     <img src="{{ post.owner.avatar_pic.url }}" class="post-avatar-img rounded-circle">
                 {% else %}
                     <img src="/media/user.svg" class="post-avatar-img rounded-circle">
                 {% endif %}
                 </div>
-                <div class="col-11 post-info">
+                <div class="col-10 post-info">
                     <p>
                         <b>{{ post.owner }}</b>
                         {% if post.owner == user %}
-                        <button>Edit</button>
+                            <button>Edit</button>
+                        {% else %}
+                            {% if post.follow_already %}
+                                <i class="fas fa-check-circle follow-already-icon interaction-icon-button"></i>
+                            {% else %}
+                                <i class="fas fa-plus-circle follow-icon interaction-icon-button"></i>
+                            {% endif %}
                         {% endif %}
                     </p>
                     <p>Created at {{ post.created_time }}</p>
@@ -51,18 +51,38 @@
             </div>
             <div class="post-content">
                 {{post.content}}
-                <div>
-                <img class="like-count-item" src="{% static 'network/like.png' %}">
-                <span>{{ post.like_count }}</span>
-                <img class="like-count-item" src="{% static 'network/like.png' %}">
-                <span>{{ post.dislike_count }}</span>
-                </div>
             </div>
             <hr style="margin: 5px;">
             <div class="post-interaction row">
-                <div class="col-3 interaction-holder"><i class="far fa-thumbs-up"></i> Like</div>
-                <div class="col-3 interaction-holder"><i class="far fa-thumbs-up"></i> Dislike</div>
-                <div class="col-3 interaction-holder"><i class="far fa-comment-dots"></i> Comment</div>
+            <input type="hidden" value="{{ post.id }}">
+                <div class="col-3 interaction-holder">
+                    <span>{{ post.like_count }}</span>
+                    <i class="far fa-thumbs-up interaction-icon-button
+                        {% if post.owner == user or post.dislike_already %}
+                            post_owner_like
+                        {% elif post.like_already %}
+                            post_like_already
+                        {% else %}
+                            can-like like-button
+                        {% endif %}
+                    "> Like</i>
+                </div>
+                <div class="col-3 interaction-holder">
+                    <span>{{ post.dislike_count }}</span>
+                    <i class="far fa-thumbs-down interaction-icon-button
+                        {% if post.owner == user or post.like_already %}
+                            post_owner_like
+                        {% elif post.dislike_already %}
+                            post_dislike_already
+                        {% else %}
+                            can-like
+                        {% endif %}
+                    "> Dislike</i>
+                </div>
+                <div class="col-3 interaction-holder">
+                    <span>{{ post.comment_count }}</span>
+                    <i class="far fa-comment-dots"> Comment</i>
+                </div>
                 <div class="col-3 interaction-holder"><i class="far fa-share-square"></i> Share</div>
             </div>
         </div>
@@ -83,4 +103,7 @@
         </ul>
     {% endif %}
 </div>
+{% endblock %}
+{% block jscript %}
+<script src="{% static 'network/js/newsfeedinteraction.js' %}"></script>
 {% endblock %}

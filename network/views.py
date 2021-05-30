@@ -1,11 +1,12 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
+from django.db.models.expressions import OuterRef
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import ListView
 from django.views.generic.edit import FormMixin
-from django.db.models import Count, Case, When, IntegerField, Prefetch, BooleanField, Value
+from django.db.models import Count, Case, When, IntegerField, BooleanField, Value, Exists
 from django.contrib.auth.decorators import login_required
 
 from .models import User
@@ -31,22 +32,40 @@ class PostListView(FormMixin, ListView):
         return context
 
     def get_queryset(self):
+        queryset = Post.objects.select_related('owner').prefetch_related(
+        ).annotate(
+            comment_count=Count('comments', distinct=True),
+            like_count=Count(
+                Case(
+                    When(likes__is_like=True, then=Value(1)),
+                    output_field=IntegerField
+                ),
+                distinct=True
+            ),
+            dislike_count=Count(
+                Case(
+                    When(likes__is_like=False, then=Value(1)),
+                    output_field=IntegerField
+                ),
+                distinct=True
+            ),
+        ).order_by('-created_time')  # improve: do we need query all?
         if self.request.user.is_authenticated:
-            followed = Follow.objects.filter(follower=self.request.user).values_list('followed', flat=True)
-        else:
-            followed = []
-        return Post.objects.select_related('owner').prefetch_related(
-            Prefetch('like', queryset=Like.objects.select_related('owner'))
-        ).annotate(like_count=Count(Case(
-            When(like__is_like=True, then=Value(1)),
-            output_field=IntegerField)
-        ), dislike_count=Count(Case(
-            When(like__is_like=False, then=Value(1)),
-            output_field=IntegerField)
-        ), follow_already=Case(
-            When(owner__in=followed, then=Value(True)),
-            default=Value(False),
-            output_field=BooleanField())).order_by('-created_time')  # improve: do we need query all?
+            return queryset.annotate(
+                follow_already=Exists(
+                    Follow.objects.filter(followed=OuterRef('owner'), follower=self.request.user)
+                ),
+                like_already=Exists(
+                    Like.objects.filter(owner=self.request.user, post_parent=OuterRef('pk'), is_like=True)
+                ),
+                dislike_already=Exists(
+                    Like.objects.filter(owner=self.request.user, post_parent=OuterRef('pk'), is_like=False)
+                )
+            )
+        return queryset.annotate(
+            follow_already=Value(False, output_field=BooleanField()),
+            like_already=Value(False, output_field=BooleanField())
+        )
 
 
 @login_required

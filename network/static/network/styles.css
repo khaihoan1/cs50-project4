@@ -1,8 +1,11 @@
+:root {
+    --color: #2FB5FA;
+}
 body {
     margin-top: 5px;
 }
 .main-logo {
-    color: #2FB5FA;
+    color: var(--color);
     font-size: 30px;
 }
 .link-item {
@@ -21,7 +24,7 @@ body {
     margin: 10px;
 }
 .list-link-item:hover {
-    color: #2FB5FA;
+    color: var(--color);
     cursor: pointer;
 }
 .logout-button {
@@ -69,11 +72,25 @@ body {
 }
 .interaction-holder {
     text-align: center;
+}
+.interaction-icon-button {
     cursor: pointer;
 }
-.like-count-item {
-    width: 15px;
-    height: 15px;
+.post_owner_like {
+    opacity: 0.5;
+    cursor: inherit;
+}
+.post_like_already {
+    color: var(--color);
+}
+.post_dislike_already {
+    color: red;
+}
+.follow-icon {
+    color: var(--color);
+}
+.follow-already-icon {
+    color: green;
 }
 .post-avatar-img {
     width: 100%;

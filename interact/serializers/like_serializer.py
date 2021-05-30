@@ -7,6 +7,7 @@ class LikeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Like
         fields = ('is_like',)
+        extra_kwargs = {'is_like': {'required': True}}
 
     def save(self):
         return super().save(owner=self.context['request'].user, post_parent=self.context['post'])
