@@ -1,5 +1,4 @@
 from factory import Factory
-import factory
 from network.models import User
 
 
