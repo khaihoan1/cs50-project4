@@ -1,7 +1,7 @@
 likeInteracationCreateButtons = document.querySelectorAll('.can-like');
 likeInteracationCreateButtons.forEach(element => {
     element.addEventListener('click', addLikeHandler); 
-});
+})
 likeInteractionRemoveButton = document.querySelectorAll('.like-interaction-clicked');
 likeInteractionRemoveButton.forEach(element => {
     element.addEventListener('click', removeLikeHandler)
@@ -32,7 +32,7 @@ function addLikeHandler() {
     xhttp.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
     data = JSON.stringify({
         "is_like": isLike,
-    })  ;
+    });
     xhttp.send(data);
     var buttonBeingClicked = this;
     xhttp.onload = function() {
@@ -79,4 +79,37 @@ function removeLikeHandler() {
         buttonBeingClicked.removeEventListener('click', removeLikeHandler);
         buttonBeingClicked.addEventListener('click', addLikeHandler);
     }
-} 
+}
+// -----------------------------------
+followButtons = document.querySelectorAll('.interaction-icon-button');
+followButtons.forEach(element => {
+    element.addEventListener('click', followHandler);
+})
+function followHandler() {
+    let follower_id = document.getElementById('user-id').value;
+    let followed_id = this.getAttribute('owner_id'); // owner_id is the id of the post's owner
+    let isCreate = this.classList.contains('follow-icon');
+    var xhttp = new XMLHttpRequest();
+    method = isCreate ? "POST" : "DELETE";
+
+    xhttp.open(method, `/interaction/follow`, true);
+    xhttp.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+    xhttp.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+    data = JSON.stringify({
+        "follower": parseInt(follower_id),
+        "followed": parseInt(followed_id),
+    });
+    xhttp.send(data);
+    var button = this;
+    xhttp.onload = function() {
+        res = JSON.parse(this.response);
+        if (res.errors !== undefined){
+            alert(res['erros']);
+        } else {
+            button.classList.toggle('fa-plus-circle');
+            button.classList.toggle('fa-check-circle');
+            button.classList.toggle('follow-already-icon');
+            button.classList.toggle('follow-icon');
+        }
+    }
+}

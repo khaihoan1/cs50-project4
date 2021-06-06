@@ -7,7 +7,7 @@ router = DefaultRouter()
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('follow/', follow_view.FollowListView.as_view()),
+    path('follow', follow_view.FollowListView.as_view({'post': 'create', 'delete': 'destroy'})),
     path('<int:post_id>/comments', comment_view.CommentListView.as_view(), name='comment_list'),
     path('<int:post_id>/comments/<int:pk>', comment_view.CommentObjectView.as_view(), name='comment_object_view'),
     path(

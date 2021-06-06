@@ -41,9 +41,9 @@
                             <button>Edit</button>
                         {% else %}
                             {% if post.follow_already %}
-                                <i class="fas fa-check-circle follow-already-icon interaction-icon-button"></i>
+                                <i owner_id="{{ post.owner.id }}" class="fas fa-check-circle follow-already-icon interaction-icon-button"></i>
                             {% else %}
-                                <i class="fas fa-plus-circle follow-icon interaction-icon-button"></i>
+                                <i owner_id="{{ post.owner.id }}" class="fas fa-plus-circle follow-icon interaction-icon-button"></i>
                             {% endif %}
                         {% endif %}
                     </p>
