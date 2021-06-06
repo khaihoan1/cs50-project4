@@ -51,7 +51,7 @@ class LikeViewSet(viewsets.ModelViewSet):
         instance = self.perform_create(serializer)
         data_to_return = {
             'like_count_updated': instance.get_count_to_update(
-                self.kwargs['like_or_dislike'] == 'like'
+                request.data['is_like']
             )}  # not just increase like_count by 1, this returns new Like count (by query)
         headers = self.get_success_headers(serializer.data)  # serialize.data cannot be modified
         data_to_return.update(serializer.data)
@@ -63,3 +63,8 @@ class LikeViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         return serializer.save()
+
+    def get_object(self):
+        queryset = self.get_queryset()
+        obj = queryset.filter(owner_id=self.kwargs['owner_id'])
+        return obj

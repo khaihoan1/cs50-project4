@@ -23,6 +23,7 @@
     </div>
 </div>
 <div class="news-feed row">
+    <input type="hidden" value="{{ user.id }}" id="user-id"> {# user to reference USER #}
     {% for post in posts %}
         <div class="post-item">
             <div class="post-header row">
@@ -57,13 +58,13 @@
             <input type="hidden" value="{{ post.id }}">
                 <div class="col-3 interaction-holder">
                     <span>{{ post.like_count }}</span>
-                    <i class="far fa-thumbs-up interaction-icon-button
+                    <i class="far fa-thumbs-up interaction-icon-button is-like
                         {% if post.owner == user or post.dislike_already %}
-                            post_owner_like
+                            like-cannot-click
                         {% elif post.like_already %}
-                            post_like_already
+                            post_like_already like-interaction-clicked
                         {% else %}
-                            can-like like-button
+                            can-like 
                         {% endif %}
                     "> Like</i>
                 </div>
@@ -71,9 +72,9 @@
                     <span>{{ post.dislike_count }}</span>
                     <i class="far fa-thumbs-down interaction-icon-button
                         {% if post.owner == user or post.like_already %}
-                            post_owner_like
+                            like-cannot-click
                         {% elif post.dislike_already %}
-                            post_dislike_already
+                            post_dislike_already like-interaction-clicked
                         {% else %}
                             can-like
                         {% endif %}

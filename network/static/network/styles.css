@@ -76,7 +76,7 @@ body {
 .interaction-icon-button {
     cursor: pointer;
 }
-.post_owner_like {
+.like-cannot-click {
     opacity: 0.5;
     cursor: inherit;
 }

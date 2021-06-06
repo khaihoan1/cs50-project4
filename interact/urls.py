@@ -14,5 +14,9 @@ urlpatterns = [
         '<int:post_id>/<str:like_or_dislike>',
         like_view.LikeViewSet.as_view({'get': 'list', 'post': 'create'}),
         name="like_view",
+    ),
+    path(
+        '<int:post_id>/<str:like_or_dislike>/<int:owner_id>',
+        like_view.LikeViewSet.as_view({'get': 'retrieve', 'delete': 'destroy'}),
     )
 ]
