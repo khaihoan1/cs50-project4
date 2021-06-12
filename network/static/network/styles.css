@@ -1,5 +1,6 @@
 :root {
     --color: #2FB5FA;
+    --newfeed-color: #dfdcdc;
 }
 body {
     margin-top: 5px;
@@ -60,7 +61,7 @@ body {
     margin-right: 10px;
 }
 .news-feed {
-    background: #f2f2f2;
+    background: var(--newfeed-color);
     height: auto;
     padding: 10px 30px;
 }
@@ -95,3 +96,24 @@ body {
 .post-avatar-img {
     width: 100%;
 }
+/* This is loader from W3School */
+/* https://www.w3schools.com/howto/howto_css_loader.asp */
+.loader {
+    border: 4px solid var(--newfeed-color);
+    margin: auto;
+    border-radius: 50%;
+    border-top: 3px solid var(--color);
+    width: 20px;
+    height: 20px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
+}
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }

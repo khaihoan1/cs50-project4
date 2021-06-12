@@ -13,9 +13,6 @@
         <form method="POST" action="{% url 'post:post_create' %}">
             {% csrf_token %}
                 {{ form }}
-            {% if object %}
-                hihi
-            {% endif %}
             <div class="create-post-button">
                 <button class="btn btn-primary" type="submmit">Yield</button>
             </div>
@@ -55,7 +52,7 @@
             </div>
             <hr style="margin: 5px;">
             <div class="post-interaction row">
-            <input type="hidden" value="{{ post.id }}">
+                <input type="hidden" value="{{ post.id }}">
                 <div class="col-3 interaction-holder">
                     <span>{{ post.like_count }}</span>
                     <i class="far fa-thumbs-up interaction-icon-button is-like
@@ -85,6 +82,24 @@
                     <i class="far fa-comment-dots"> Comment</i>
                 </div>
                 <div class="col-3 interaction-holder"><i class="far fa-share-square"></i> Share</div>
+            </div>
+            <hr style="margin: 5px;">
+            <div class="timer-roll row">
+                {# This is loader from W3School:#}
+                {# https://www.w3schools.com/howto/howto_css_loader.asp #}
+                <div class="loader"></div>
+            </div>
+            <div class="post-comment row">
+                <div class="col-1 avatar-post-form-container">
+                    <img class="avatar-post-from-img rounded-circle"
+                    src="{% if user.avatar_pic %}{{ user.avatar_pic.url }}{% else %}/media/user.svg{% endif %}">
+                </div>
+                <div class="col-11">
+                    <form method="POST" action="{% url 'post:post_create' %}">
+                        {% csrf_token %}
+                            {{ form }}
+                    </form>
+                </div>
             </div>
         </div>
     {% endfor %}
