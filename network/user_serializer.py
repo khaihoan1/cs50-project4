@@ -5,4 +5,4 @@ from network.models import User
 class UserInfoForInteractionSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username')
+        fields = ('id', 'username', 'avatar_pic')

@@ -79,17 +79,17 @@
                 </div>
                 <div class="col-3 interaction-holder">
                     <span>{{ post.comment_count }}</span>
-                    <i class="far fa-comment-dots"> Comment</i>
+                    <i class="far fa-comment-dots comment-show-button"> Comment</i>
                 </div>
                 <div class="col-3 interaction-holder"><i class="far fa-share-square"></i> Share</div>
             </div>
-            <hr style="margin: 5px;">
-            <div class="timer-roll row">
+            <hr id="hr-{{ post.id }}" style="margin: 5px; display: none;">
+            <div class="timer-roll row" id="timer-roll-{{ post.id }}" style="display: none;">
                 {# This is loader from W3School:#}
                 {# https://www.w3schools.com/howto/howto_css_loader.asp #}
                 <div class="loader"></div>
             </div>
-            <div class="post-comment row">
+            <div class="post-comment-form row">
                 <div class="col-1 avatar-post-form-container">
                     <img class="avatar-post-from-img rounded-circle"
                     src="{% if user.avatar_pic %}{{ user.avatar_pic.url }}{% else %}/media/user.svg{% endif %}">
@@ -99,6 +99,30 @@
                         {% csrf_token %}
                             {{ form }}
                     </form>
+                </div>
+            </div>
+            <div class="post-comments row">
+                <div class="col-2 post-avatar">
+                {% if post.owner.avatar_pic %}
+                    <img src="{{ post.owner.avatar_pic.url }}" class="post-avatar-img rounded-circle">
+                {% else %}
+                    <img src="/media/user.svg" class="post-avatar-img rounded-circle">
+                {% endif %}
+                </div>
+                <div class="col-10 post-info">
+                    <p>
+                        <b>{{ comment.owner }}</b>
+                        {% if post.owner == user %}
+                            <button>Edit</button>
+                        {% else %}
+                            {% if post.follow_already %}
+                                <i owner_id="{{ post.owner.id }}" class="fas fa-check-circle follow-already-icon interaction-icon-button"></i>
+                            {% else %}
+                                <i owner_id="{{ post.owner.id }}" class="fas fa-plus-circle follow-icon interaction-icon-button"></i>
+                            {% endif %}
+                        {% endif %}
+                    </p>
+                    <p>Created at {{ post.created_time }}</p>
                 </div>
             </div>
         </div>
@@ -121,5 +145,6 @@
 </div>
 {% endblock %}
 {% block jscript %}
-<script src="{% static 'network/js/newsfeedinteraction.js' %}"></script>
+<script src="{% static 'network/js/newsfeedlikes.js' %}"></script>
+<script src="{% static 'network/js/newsfeedcomments.js' %}"></script>
 {% endblock %}

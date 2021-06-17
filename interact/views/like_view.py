@@ -1,4 +1,3 @@
-from functools import cached_property
 from rest_framework import viewsets, permissions
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
@@ -17,7 +16,6 @@ class LikeViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'post', 'delete']
     permission_classes = [like_permissions.JustOwnerCanDelete, permissions.IsAuthenticatedOrReadOnly]
 
-    @cached_property
     def get_post(self):
         return get_object_or_404(Post, id=self.kwargs['post_id'])
 

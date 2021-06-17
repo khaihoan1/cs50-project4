@@ -6,13 +6,12 @@ from network.user_serializer import UserInfoForInteractionSerializer
 class CommentSerializer(ModelSerializer):  # this serializer is used for creating
     class Meta:
         model = Comment
-        fields = ('content', 'post_parent', 'comment_ref')
+        fields = ('content', 'comment_ref')
 
     def create(self, validated_data):
         validated_data['owner'] = self.context['request'].user
-        # validated_data['comment_ref'] =
+        validated_data['post_parent'] = self.context['post_parent']
         return self.Meta.model.objects.create(**validated_data)
-        # return 'gg'
 
 
 class CommentObjectSerializer(ModelSerializer):  # this one is used for modifying/deleting
@@ -22,9 +21,11 @@ class CommentObjectSerializer(ModelSerializer):  # this one is used for modifyin
 
 
 class ChildCommentSerializer(ModelSerializer):  # serializer for child comments in list
+    owner = UserInfoForInteractionSerializer()
+
     class Meta:
         model = Comment
-        fields = ('content', 'timestamp', 'owner')
+        fields = ('content', 'timestamp', 'owner', 'id')
 
 
 class CommentListSerializer(ModelSerializer):  # this one is used for listing comments
