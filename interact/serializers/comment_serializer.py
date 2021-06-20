@@ -17,7 +17,7 @@ class CommentSerializer(ModelSerializer):  # this serializer is used for creatin
 class CommentObjectSerializer(ModelSerializer):  # this one is used for modifying/deleting
     class Meta:
         model = Comment
-        fields = ('content')
+        fields = ('content',)
 
 
 class ChildCommentSerializer(ModelSerializer):  # serializer for child comments in list

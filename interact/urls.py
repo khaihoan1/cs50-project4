@@ -10,6 +10,7 @@ urlpatterns = [
     path('follow', follow_view.FollowListView.as_view({'post': 'create', 'delete': 'destroy'})),
     path('<int:post_id>/comments', comment_view.CommentView.as_view(), name='comment_list'),
     path('<int:post_id>/comments/<int:pk>', comment_view.CommentObjectView.as_view(), name='comment_object_view'),
+    path('<int:post_id>/subcomments/<int:comment_ref_id>', comment_view.SubCommentListView.as_view()),
     path(
         '<int:post_id>/<str:like_or_dislike>',
         like_view.LikeViewSet.as_view({'get': 'list', 'post': 'create'}),

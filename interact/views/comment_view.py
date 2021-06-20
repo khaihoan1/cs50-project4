@@ -1,6 +1,6 @@
 from functools import cached_property
 
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from django.shortcuts import get_object_or_404
@@ -11,10 +11,10 @@ from interact.serializers.comment_serializer import (
     CommentObjectSerializer,
     CommentListSerializer,
 )
-from interact.pagination import CommentLimitOffsetPagination
+from interact.pagination import CommentLimitOffsetPagination, SubCommentLimitOffsetPagination
 from interact.permissions import comment_permisssions
 from interact.exception import PostNotFound, RefCommentNotFound, CannotRefSubComment
-from interact.constants import NUMBER_OF_SUB_COMMENT
+from interact.constants import NUMBER_OF_PRELOADED_SUB_COMMENT
 
 from post.models import Post
 
@@ -23,15 +23,22 @@ class CommentView(ListCreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
-    pagination_class = (CommentLimitOffsetPagination)
+    pagination_class = CommentLimitOffsetPagination
 
     @cached_property
     def get_post(self):
+        try:
+            return Post.objects.get(id=self.kwargs['post_id'])
+        except Post.DoesNotExist:
+            raise PostNotFound
         return get_object_or_404(Post, id=self.kwargs['post_id'])
 
     def get_queryset(self):
         post_id = self.kwargs['post_id']
-        return self.queryset.filter(post_parent=post_id)
+        return self.queryset.filter(
+            post_parent=post_id,
+            comment_ref=None
+        ).select_related('owner').order_by('-timestamp')
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -46,8 +53,6 @@ class CommentView(ListCreateAPIView):
         return context
 
     def perform_create(self, serializer):
-        if not self.get_post:
-            raise PostNotFound
         if serializer.validated_data['comment_ref']:
             ref_comment = Comment.objects.filter(
                 post_parent__id=self.kwargs['post_id'],
@@ -60,15 +65,17 @@ class CommentView(ListCreateAPIView):
             else:  # Add subcomment to comment's latest reply ids string
                 new_subcomment = serializer.save()
                 ref_comment_latest_reply_ids_string = ref_comment.latest_reply_ids_string
-                ids = ref_comment_latest_reply_ids_string.split(';')
+                ids = ref_comment_latest_reply_ids_string.split(';') if ref_comment_latest_reply_ids_string else []
                 ids.append(str(new_subcomment.id))
-                ids = ids[-NUMBER_OF_SUB_COMMENT:]
-                ref_comment.latest_reply_ids_string = ids.join(';')
-        serializer.save()
+                ids = ids[-NUMBER_OF_PRELOADED_SUB_COMMENT:]
+                ref_comment.latest_reply_ids_string = ';'.join(ids)
+                ref_comment.save()
+        else:
+            serializer.save()
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-        page = self.paginate_queryset(queryset)
+        page = self.paginate_queryset(queryset)[:]
         sub_comment_ids = [i.latest_reply_ids_string.split(';') for i in page if i.latest_reply_ids_string != '']
         sub_comment_ids = [int(i) for sub_list in sub_comment_ids for i in sub_list]
         # My implement to get 3 latest reply of each Comment
@@ -95,3 +102,15 @@ class CommentObjectView(RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         post_id = self.kwargs['post_id']
         return self.queryset.filter(post_parent=post_id)
+
+
+class SubCommentListView(ListAPIView):
+    queryset = Comment.objects.all()
+    pagination_class = SubCommentLimitOffsetPagination
+    serializer_class = CommentListSerializer
+
+    def get_queryset(self):
+        return self.queryset.filter(
+            post_parent=self.kwargs['post_id'],
+            comment_ref=self.kwargs['comment_ref_id']
+        ).select_related('owner').order_by('-timestamp')
