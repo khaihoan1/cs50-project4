@@ -29,7 +29,7 @@ class ChildCommentSerializer(ModelSerializer):  # serializer for child comments 
 
 
 class CommentListSerializer(ModelSerializer):  # this one is used for listing comments
-    children_comment = ChildCommentSerializer(many=True)
+    children_comment = ChildCommentSerializer(many=True, source='sub_comments')
     owner = UserInfoForInteractionSerializer()
 
     class Meta:

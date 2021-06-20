@@ -15,7 +15,9 @@ class Interact(models.Model):
 
 class Comment(Interact):
     content = models.TextField()
-    timestamp = models.TimeField()
+    timestamp = models.DateTimeField()
+    last_modified = models.DateTimeField(auto_now=True)
+    latest_reply_ids_string = models.TextField(default='')
     post_parent = models.ForeignKey(
         Post,
         on_delete=models.CASCADE,
@@ -31,7 +33,8 @@ class Comment(Interact):
     )
 
     def save(self, *args, **kwargs):
-        self.timestamp = timezone.now()
+        if not self.pk:
+            self.timestamp = timezone.now()
         return super(Comment, self).save(*args, **kwargs)
 
 
