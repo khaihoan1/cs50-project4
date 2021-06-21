@@ -2,16 +2,18 @@ from functools import cached_property
 
 from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.response import Response
+from rest_framework import status
 
-from django.shortcuts import get_object_or_404
 
 from interact.models import Comment
 from interact.serializers.comment_serializer import (
     CommentSerializer,
     CommentObjectSerializer,
-    CommentListSerializer,
+    MainCommentListSerializer,
+    SubCommentListSerializer
 )
-from interact.pagination import CommentLimitOffsetPagination, SubCommentLimitOffsetPagination
+from interact.pagination import CommentLimitOffsetPagination
 from interact.permissions import comment_permisssions
 from interact.exception import PostNotFound, RefCommentNotFound, CannotRefSubComment
 from interact.constants import NUMBER_OF_PRELOADED_SUB_COMMENT
@@ -31,7 +33,6 @@ class CommentView(ListCreateAPIView):
             return Post.objects.get(id=self.kwargs['post_id'])
         except Post.DoesNotExist:
             raise PostNotFound
-        return get_object_or_404(Post, id=self.kwargs['post_id'])
 
     def get_queryset(self):
         post_id = self.kwargs['post_id']
@@ -42,7 +43,7 @@ class CommentView(ListCreateAPIView):
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
-            return CommentListSerializer
+            return MainCommentListSerializer
         return super().get_serializer_class()
 
     def get_serializer_context(self):
@@ -103,11 +104,30 @@ class CommentObjectView(RetrieveUpdateDestroyAPIView):
         post_id = self.kwargs['post_id']
         return self.queryset.filter(post_parent=post_id)
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        main_comment = instance.comment_ref
+        id_to_eliminate = instance.id
+        self.perform_destroy(instance)
+        if main_comment:
+            latest_sub_comment_id_list = [
+                id for id in main_comment.latest_reply_ids_string.split(';')
+                if id != str(id_to_eliminate)
+            ]
+            latest_comments = main_comment.children_comment.order_by(
+                '-timestamp'
+            )[:NUMBER_OF_PRELOADED_SUB_COMMENT]
+            if len(latest_comments) >= 3:
+                latest_sub_comment_id_list.append(str(latest_comments[NUMBER_OF_PRELOADED_SUB_COMMENT-1].id))
+            main_comment.latest_reply_ids_string = ';'.join(latest_sub_comment_id_list)
+            main_comment.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class SubCommentListView(ListAPIView):
     queryset = Comment.objects.all()
-    pagination_class = SubCommentLimitOffsetPagination
-    serializer_class = CommentListSerializer
+    pagination_class = CommentLimitOffsetPagination
+    serializer_class = SubCommentListSerializer
 
     def get_queryset(self):
         return self.queryset.filter(

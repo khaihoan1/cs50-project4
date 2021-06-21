@@ -28,9 +28,16 @@ class ChildCommentSerializer(ModelSerializer):  # serializer for child comments 
         fields = ('content', 'timestamp', 'owner', 'id')
 
 
-class CommentListSerializer(ModelSerializer):  # this one is used for listing comments
-    children_comment = ChildCommentSerializer(many=True, source='sub_comments')
+class SubCommentListSerializer(ModelSerializer):  # this one is used for listing sub-comments
     owner = UserInfoForInteractionSerializer()
+
+    class Meta:
+        model = Comment
+        fields = ('id', 'content', 'timestamp', 'owner', 'post_parent')
+
+
+class MainCommentListSerializer(SubCommentListSerializer):  # this one is used for listing main comments
+    children_comment = ChildCommentSerializer(many=True, source='sub_comments')
 
     class Meta:
         model = Comment
