@@ -85,6 +85,9 @@ class CommentView(ListCreateAPIView):
         ).select_related('owner').order_by('-timestamp')
         for comment in page:
             comment.sub_comments = [sub_comment for sub_comment in sub_comments if sub_comment.comment_ref == comment]
+            comment.has_more_than_three_sub = len(comment.sub_comments) > 3
+            comment.has_reply = len(comment.sub_comments) > 0
+
         serializer = self.get_serializer(page, many=True)
 
         return self.get_paginated_response(serializer.data)
@@ -133,4 +136,4 @@ class SubCommentListView(ListAPIView):
         return self.queryset.filter(
             post_parent=self.kwargs['post_id'],
             comment_ref=self.kwargs['comment_ref_id']
-        ).select_related('owner').order_by('-timestamp')
+        ).select_related('owner').order_by('timestamp')

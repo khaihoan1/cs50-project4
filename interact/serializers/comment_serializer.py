@@ -1,3 +1,4 @@
+from rest_framework import fields
 from rest_framework.serializers import ModelSerializer
 from interact.models import Comment
 from network.user_serializer import UserInfoForInteractionSerializer
@@ -38,7 +39,11 @@ class SubCommentListSerializer(ModelSerializer):  # this one is used for listing
 
 class MainCommentListSerializer(SubCommentListSerializer):  # this one is used for listing main comments
     children_comment = ChildCommentSerializer(many=True, source='sub_comments')
+    has_more_than_three_sub = fields.BooleanField()
+    has_reply = fields.BooleanField()
 
     class Meta:
         model = Comment
-        fields = ('id', 'content', 'timestamp', 'owner', 'post_parent', 'children_comment')
+        fields = (
+            'id', 'content', 'timestamp', 'owner', 'post_parent',
+            'children_comment', 'has_more_than_three_sub', 'has_reply')

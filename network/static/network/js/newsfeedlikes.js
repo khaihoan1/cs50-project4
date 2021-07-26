@@ -4,7 +4,7 @@ likeInteracationCreateButtons.forEach(element => {
 })
 likeInteractionRemoveButton = document.querySelectorAll('.like-interaction-clicked');
 likeInteractionRemoveButton.forEach(element => {
-    element.addEventListener('click', removeLikeHandler)
+    element.addEventListener('click', removeLikeHandler);
 })
 function getCookie(name) {
     var cookieValue = null;
@@ -81,7 +81,7 @@ function removeLikeHandler() {
     }
 }
 // -----------------------------------
-followButtons = document.querySelectorAll('.interaction-icon-button');
+followButtons = document.querySelectorAll('.follow-icon');
 followButtons.forEach(element => {
     element.addEventListener('click', followHandler);
 })

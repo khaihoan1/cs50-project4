@@ -32,20 +32,19 @@ class PostListView(FormMixin, ListView):
         return context
 
     def get_queryset(self):
-        queryset = Post.objects.select_related('owner').prefetch_related(
-        ).annotate(
+        queryset = Post.objects.select_related('owner').annotate(
             comment_count=Count('comments', distinct=True),
             like_count=Count(
                 Case(
                     When(likes__is_like=True, then=Value(1)),
-                    output_field=IntegerField
+                    output_field=IntegerField()
                 ),
                 distinct=True
             ),
             dislike_count=Count(
                 Case(
                     When(likes__is_like=False, then=Value(1)),
-                    output_field=IntegerField
+                    output_field=IntegerField()
                 ),
                 distinct=True
             ),

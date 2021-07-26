@@ -22,7 +22,7 @@
                             <a><i class="fas fa-fan"></i></a>
                         </li>
                         <li class="nav-item list-link-item">
-                            <a><i class="fas fa-home link-item"></i><b>Home</b></a>
+                            <a href="/"><i class="fas fa-home link-item"></i><b>Home</b></a>
                         </li>
                         <li class="nav-item list-link-item">
                             <a><i class="fas fa-hashtag link-item"></i><b>Following</b></a>
@@ -66,12 +66,19 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 <script>
-$('.post-create-input').each(function () {
+$('.text-area-input').each(function () {
   this.setAttribute('style', 'height:' + (this.scrollHeight) + 'px;overflow-y:hidden;');
 }).on('input', function () {
   this.style.height = 'auto';
   this.style.height = (this.scrollHeight) + 'px';
 });
+id_content.onkeyup = function() {
+    if (!this.value) {
+        // Resize the comment textarea when empty
+        this.style.height = '52px'; 
+        return;
+    }
+}
 </script>
 {% block jscript %}
 {% endblock %}

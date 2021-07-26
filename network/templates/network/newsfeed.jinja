@@ -6,7 +6,7 @@
 </div>
 <div class="post-form row">
     <div class="col-1 avatar-post-form-container">
-        <img class="avatar-post-from-img rounded-circle"
+        <img class="avatar-post-form-img rounded-circle" id="user-avatar"
         src="{% if user.avatar_pic %}{{ user.avatar_pic.url }}{% else %}/media/user.svg{% endif %}">
     </div>
     <div class="col-11">
@@ -14,7 +14,7 @@
             {% csrf_token %}
                 {{ form }}
             <div class="create-post-button">
-                <button class="btn btn-primary" type="submmit">Yield</button>
+                <button class="btn btn-primary post-button" type="submmit">Yield</button>
             </div>
         </form>
     </div>
@@ -32,7 +32,7 @@
                 {% endif %}
                 </div>
                 <div class="col-10 post-info">
-                    <p>
+                    <span>
                         <b>{{ post.owner }}</b>
                         {% if post.owner == user %}
                             <button>Edit</button>
@@ -43,8 +43,8 @@
                                 <i owner_id="{{ post.owner.id }}" class="fas fa-plus-circle follow-icon interaction-icon-button"></i>
                             {% endif %}
                         {% endif %}
-                    </p>
-                    <p>Created at {{ post.created_time }}</p>
+                    </span>
+                    <span class="post-time">Created at {{ post.created_time }}</span>
                 </div>
             </div>
             <div class="post-content">
@@ -83,48 +83,29 @@
                 </div>
                 <div class="col-3 interaction-holder"><i class="far fa-share-square"></i> Share</div>
             </div>
-            <hr id="hr-{{ post.id }}" style="margin: 5px; display: none;">
+            <hr id="hr-{{ post.id }}" style="margin: 5px 5px 15px 5px; display: none;">
+            <div class="row post-comment-form" id="comment-area-{{ post.id}}">
+                <div class="col-1 avatar-post-form-container">
+                    <img class="avatar-post-comment-form rounded-circle"
+                    src="{% if user.avatar_pic %}{{ user.avatar_pic.url }}{% else %}/media/user.svg{% endif %}">
+                </div>
+                <div class="col-11 comment-div">
+                    <form class="comment-form">
+                        <textarea class="text-area-input text-area-comment" id="text-area-comment-{{ post.id }}"
+                        placeholder="Write a comment..."></textarea>
+                        <input type="hidden" name="post-parent" value="{{ post.id }}">
+                    </form>
+                </div>
+            </div>
             <div class="timer-roll row" id="timer-roll-{{ post.id }}" style="display: none;">
                 {# This is loader from W3School:#}
                 {# https://www.w3schools.com/howto/howto_css_loader.asp #}
                 <div class="loader"></div>
             </div>
-            <div class="post-comment-form row">
-                <div class="col-1 avatar-post-form-container">
-                    <img class="avatar-post-from-img rounded-circle"
-                    src="{% if user.avatar_pic %}{{ user.avatar_pic.url }}{% else %}/media/user.svg{% endif %}">
-                </div>
-                <div class="col-11">
-                    <form method="POST" action="{% url 'post:post_create' %}">
-                        {% csrf_token %}
-                            {{ form }}
-                    </form>
-                </div>
-            </div>
-            <div class="post-comments row">
-                <div class="col-2 post-avatar">
-                {% if post.owner.avatar_pic %}
-                    <img src="{{ post.owner.avatar_pic.url }}" class="post-avatar-img rounded-circle">
-                {% else %}
-                    <img src="/media/user.svg" class="post-avatar-img rounded-circle">
-                {% endif %}
-                </div>
-                <div class="col-10 post-info">
-                    <p>
-                        <b>{{ comment.owner }}</b>
-                        {% if post.owner == user %}
-                            <button>Edit</button>
-                        {% else %}
-                            {% if post.follow_already %}
-                                <i owner_id="{{ post.owner.id }}" class="fas fa-check-circle follow-already-icon interaction-icon-button"></i>
-                            {% else %}
-                                <i owner_id="{{ post.owner.id }}" class="fas fa-plus-circle follow-icon interaction-icon-button"></i>
-                            {% endif %}
-                        {% endif %}
-                    </p>
-                    <p>Created at {{ post.created_time }}</p>
-                </div>
-            </div>
+{# ------------ #}
+
+{# ------------ #}
+
         </div>
     {% endfor %}
     

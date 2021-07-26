@@ -11,8 +11,8 @@ class PostCreateForm(forms.ModelForm):
         fields = ['content']
         widgets = {
             'content': forms.Textarea(attrs=({
-                'rows': '2',
-                'class': 'post-create-input',
+                'rows': '1',
+                'class': 'text-area-input new-post',
                 'placeholder': "What's on your mind?"
             }))
         }

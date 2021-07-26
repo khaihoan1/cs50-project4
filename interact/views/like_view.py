@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 
 from interact.permissions import like_permissions
 from post.models import Post
+from functools import cached_property
 
 
 class LikeViewSet(viewsets.ModelViewSet):
@@ -16,6 +17,7 @@ class LikeViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'post', 'delete']
     permission_classes = [like_permissions.JustOwnerCanDelete, permissions.IsAuthenticatedOrReadOnly]
 
+    @cached_property
     def get_post(self):
         return get_object_or_404(Post, id=self.kwargs['post_id'])
 
