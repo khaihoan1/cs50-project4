@@ -5,3 +5,8 @@ __pycache__/
 .vscode/
 .python-version
 *.sqlite3
+
+
+# Files in Media Folder, but keep the folder for code structure.
+media/*
+!media/.gitkeep
